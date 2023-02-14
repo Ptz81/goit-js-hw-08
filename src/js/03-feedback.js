@@ -1,11 +1,20 @@
 import throttle from 'lodash.throttle';
 
-//знайти елемент
+//знайти елементи
 const formElement = document.querySelector('.feedback-form');
+// const currentData = localStorage.getItem('feedback-form-state');
 
+formElement.addEventListener('input', throttle(inputElementStorage, 500))
+
+formElement.addEventListener('submit', handleFormSubmit);
+
+function inputElementStorage(e) {
+localStorage.setItem('feedback-form-state', e.target.name);
+}
 
 function serializeForm(formNode) {
   const { elements } = formNode
+
   const data = Array.from(elements)
     .filter((item) => !!item.name)
     .map((element) => {
@@ -17,20 +26,9 @@ function serializeForm(formNode) {
   console.log(data)
 }
 
-
+// Просимо форму не відправляти данні самостійно та поведінка для submit
 function handleFormSubmit(event) {
-  // Просимо форму не відправляти данні самостійно
+
   event.preventDefault()
   serializeForm(formElement)
 }
-
-formElement.addEventListener('submit', handleFormSubmit);
-
-
-
-formElement.addEventListener('input', (e) => {
-  localStorage.setItem('feedback-form-state', e.target);
-})
-
-// змінна, яка витягає дані з Локального сховища
-const currentData = localStorage.getItem('feedback-form-state');
