@@ -7,35 +7,44 @@ const message = formElement[1];
 
 const LOCALSTORAGE_KEY = 'feedback-form-state';
 
-const currentData = {};
 
+//слухач подій на кнопку та форму
 
 formElement.addEventListener('input', throttle(inputElementStorage, 500))
 formElement.addEventListener('submit', handleFormSubmit);
 
 reproductionForm();
 
+//функція, яка приймає дані з форми і зберігає дані з локальне сховище
 function inputElementStorage(e) {
-  currentData[e.target.name] = e.target.value.trim();
+  const currentData = { email: email.value, message: message.value };
+
   localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(currentData));
 
 }
 
-
+//функція на сабміт - забороняє перевантажувати сторінку, контроль введених даних, очищає форму, звільняє сховище
 function handleFormSubmit(e) {
   e.preventDefault();
-  e.currentTarget.reset();
+  const form = e.currentTarget;
+
+  if (!form.email.value.trim() || !form.message.value.trim()) {
+    return alert('Please fill in all the fields in form!')
+  }
+
+   e.currentTarget.reset();
   localStorage.removeItem(LOCALSTORAGE_KEY);
 
 }
 
+//функція, яка витягує дані зі сховища при перезагрузці сторінки
 function reproductionForm() {
 
   const parseData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
 
   if (parseData) {
-    email.value = parseData.email || '';;
-    message.value = parseData.message || '';;
+    email.value = parseData.email || '';
+    message.value = parseData.message || '';
   }
 }
 
